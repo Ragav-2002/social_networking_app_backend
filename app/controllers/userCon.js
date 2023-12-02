@@ -1,12 +1,19 @@
 const User = require('../models/userModel')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken') 
+const {validationResult} = require('express-validator')
 
 const userCon = {}
 
-userCon.register = async(req, res) => {
-    const body = _.pick(req.body, ['username', 'email', 'password'])
+userCon.register = async(req, res) => { 
+
+    const body = _.pick(req.body, ['username', 'email', 'password']) 
+    const errors = validationResult(req) 
+    if(!errors.isEmpty()) {
+       return res.status(400).json({errors : errors.array()})
+    }
+     
     try{
         const salt = await bcrypt.genSalt()
         const hashedPass = await bcrypt.hash(body.password, salt)
@@ -27,6 +34,10 @@ userCon.register = async(req, res) => {
 
 userCon.login = async(req, res) => {
     const body = _.pick(req.body, ['email', 'password'])
+     const errors = validationResult(req) 
+     if(!errors.isEmpty()) {
+       return res.status(400).json({errors : errors.array()})
+     }
     try{
         const user = await User.findOne({email: body.email})
         if(!user){
