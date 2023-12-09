@@ -6,10 +6,13 @@ const userSchema = new Schema ({
     email : String,
     password : String,
     createdPosts : [{type : Schema.Types.ObjectId}],
+    createdComs : [{type : Schema.Types.ObjectId, ref: 'Community'}],
     role : {
         type : String,
-        enum : ['admin' , 'moderator' , 'user']
-    }
+        enum : ['admin' , 'user']
+    },
+    premiumComs: [{type : Schema.Types.ObjectId, ref: 'Community'}],
+    freeComs: [{type : Schema.Types.ObjectId, ref: 'Community'}]
 } , {timestamps : true} ) 
 
 const User = model ('User' , userSchema) 

@@ -9,19 +9,12 @@ const communitySchema = new Schema ({
      } , 
 
     description : String,
-    users : [{
-        type : Schema.Types.ObjectId,
-        ref : 'User'
-    }], 
-    posts : [{
-        type : Schema.Types.ObjectId, 
-        ref : 'Post'
-    }], 
-
-    membershipFee  :Number, 
+    users : [Schema.Types.ObjectId], 
+    posts : [Schema.Types.ObjectId], 
+    membershipFee  :{type:Number, default: 0}, 
     communityType : String,
     isApproved : Boolean, 
-    createdBy : ObjectId
+    createdBy : Schema.Types.ObjectId
 }, {timestamps  :true} ) 
 
 const Community  = model ('Community' , communitySchema) 

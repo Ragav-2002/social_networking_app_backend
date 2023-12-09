@@ -33,7 +33,7 @@ const registerEmail = {
 
 const passwordSchema = {
     notEmpty : {
-        errorMessage : 'password shoul not be empty'
+        errorMessage : 'password should not be empty'
     },
 
     isLength :{
@@ -44,10 +44,8 @@ const passwordSchema = {
 
 const logInEmail = {
     notEmpty : {
-        errorMessage : 'email must be entered to login',
-
+        errorMessage : 'email must be entered to login'
     },
-
     isEmail : {
         errorMessage : 'invalid email'
     }

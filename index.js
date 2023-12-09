@@ -4,6 +4,7 @@ const cors = require('cors')
 const app = express()
 const configureDB = require('./config/db')
 const userCon = require('./app/controllers/userCon')
+const comCon = require('./app/controllers/comCon')
 const {authUser} = require('./app/middleware/authentication')
 const {checkSchema} = require('express-validator') 
 const {regiSchema , loginSchema} = require('./app/helpers/uservalidations')
@@ -15,6 +16,10 @@ const port = 4000
 app.post('/api/user/register', checkSchema(regiSchema), userCon.register)
 app.post('/api/user/login', checkSchema(loginSchema), userCon.login)
 app.get('/api/user', authUser, userCon.account)
+app.post('/api/community/create', authUser, comCon.create)
+app.post('/api/community/edit/:id', authUser, comCon.edit)
+app.get('/api/community/:id', comCon.show)
+app.delete('/api/community/delete/:id', authUser, comCon.remove)
 
 app.listen(port,()=>{
     console.log('server is running on port',port)
