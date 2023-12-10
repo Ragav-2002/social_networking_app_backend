@@ -1,11 +1,16 @@
 const Community = require('../models/communityModel')
 const _ = require('lodash')
+const {validationResult} = require('express-validator')
 const User = require('../models/userModel')
 const Post = require('../models/postModel')
 
 const comCon = {}
 
 comCon.create = async(req, res) => {
+    const errors = validationResult(req) 
+    if(!errors.isEmpty()) {
+        return res.status(400).json({errors : errors.array()})
+    }
     const {userId} = req.user
     const requiredFields = [
         'name',
@@ -21,16 +26,19 @@ comCon.create = async(req, res) => {
     }else{
         body.isApproved = false
     }
+    
     try{
         const community = new Community(body)
         await community.save()
         res.json(community)
+        
     }catch(e){
-        res.status(500).json({errors: 'something went wrong'})
+        res.status(500).json(e.message)
     }
 }
 
 comCon.edit = async(req, res) => {
+    
     const requiredFields = [
         'name',
         'category',
