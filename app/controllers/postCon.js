@@ -55,7 +55,7 @@ postCon.deletePost = async (req , res) => {
         res.json({msg : 'deleted'})
 
     } catch (e) {
-        res.status(500).json({errors : 'Server error  try again later'}) 
+        res.status(500).json({errors : 'Server error try again later'}) 
         
     }
 } 
