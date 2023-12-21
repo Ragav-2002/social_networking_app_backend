@@ -14,4 +14,13 @@ catCon.create = async(req , res) => {
     }
 } 
 
+catCon.getCategory = async(req,res) => {
+    try {
+        const categories = await Category.find() 
+        res.json(categories)
+    } catch (e) {
+        res.status(500).json({errors : 'something went wrong'})
+    }
+}
+
 module.exports = catCon
