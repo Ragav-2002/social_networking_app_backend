@@ -76,6 +76,56 @@ comCon.remove = async(req, res)=>{
     catch(e){
         res.status(500).json({errors: 'something went wrong'})
     }
-}
+} 
+
+ comCon.getAllCom = async(req , res) => {
+    try {
+        const community = await Community.find() 
+         res.json(community)
+        
+    } catch (e) {
+        res.status(500).json({errors : 'something went wrong homie'})
+     }
+ } 
+
+ comCon.getComByUserId = async (req , res) => {
+    const {userId} = req.params 
+    try {
+         const com = await Community.find({createdBy  : userId})
+         res.json(com)
+    } catch (e) {
+        res.status(500).json (e.message)
+    }
+ }
+
+ comCon.join = async(req , res) => {
+    const {communityId} = req.params
+    const {userId} = req.user
+    try { 
+        const community = await Community.findById(communityId) 
+        if(!community.users.includes(userId)) {
+            await Community.findByIdAndUpdate(communityId , {$push : {users : userId}})
+            res.json({message : 'Subscribed..!'})
+        } else   {
+            await Community.findByIdAndUpdate(communityId , {$pull : {users : userId}})
+            res.json({message : 'Unsubscribed..!'})
+          
+        }
+    } catch (e) {
+        res.status(500).json({errors : 'something went wrong budyy try again'})
+    }
+ }  
+
+ comCon.getComByCat = async(req, res) => {
+    const {categoryId} = req.params 
+    try {
+        const communities = await Community.find({category : categoryId})
+        res.json(communities)
+    } catch (e) {
+        res.status(500).json(e.message)
+    }
+ }
+
+
 
 module.exports = comCon

@@ -9,4 +9,4 @@ const configureDB = async() => {
         console.log('error connecting to db')
     }
 }
-module.exports = configureDB
+module.exports = configureDB

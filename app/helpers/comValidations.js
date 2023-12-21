@@ -11,8 +11,8 @@ const nameSchema = {
 } 
 
 const categoryValidation = {
-    notEmpty : {
-        errorMessage : 'category must be included'
+    isMongoId : {
+        errorMessage : 'invalid category Id'
     }
 }    
 

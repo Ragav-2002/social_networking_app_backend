@@ -3,7 +3,7 @@ const {Schema , model } = mongoose
 
 const communitySchema = new Schema ({
     name : String,
-    category : [String],
+    category : Schema.Types.ObjectId,
 
     description : String,
     users : [Schema.Types.ObjectId], 
