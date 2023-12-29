@@ -17,11 +17,11 @@ comCon.create = async(req, res) => {
         'category',
         'description',
         'membershipFee', 
-        'communityType',
+        'premium',
     ]
     const body = _.pick(req.body, requiredFields)
     body.createdBy = userId
-    if(body.communityType == 'free'){
+    if(body.premium){
         body.isApproved = true
     }else{
         body.isApproved = false
@@ -30,7 +30,7 @@ comCon.create = async(req, res) => {
     try{
         const community = new Community(body)
         await community.save()
-        res.json(community)
+        res.json({msg: 'community created successfully'})
         
     }catch(e){
         res.status(500).json(e.message)
@@ -44,7 +44,7 @@ comCon.edit = async(req, res) => {
         'category',
         'description',
         'membershipFee',
-        'communityType'
+        'premium'
     ]
     const id = req.params.id
     const body = _.pick(req.body, requiredFields)
@@ -60,7 +60,7 @@ comCon.show = async(req, res) => {
     const id = req.params.id
     try{
         const community = await Community.findById(id)
-        const response = _.pick(community, ['name','description','users', 'posts', 'communityType','category'])
+        const response = _.pick(community, ['name','description','users', 'posts', 'premium','category'])
         res.json(response)
     }catch(e){
         res.status(500).json({errors: 'something went wrong'})

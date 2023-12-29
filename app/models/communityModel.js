@@ -9,7 +9,7 @@ const communitySchema = new Schema ({
     users : [Schema.Types.ObjectId], 
     posts : [Schema.Types.ObjectId], 
     membershipFee  :{type:Number, default: 0}, 
-    communityType : String,
+    premium  : Boolean,
     isApproved : Boolean, 
     createdBy : Schema.Types.ObjectId
 }, {timestamps  :true} ) 

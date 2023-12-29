@@ -47,7 +47,7 @@ userCon.login = async(req, res) => {
         }else{
             const tokenData = {userId: user._id, userRole: user.role}
             const token = jwt.sign(tokenData, process.env.SECRET)
-            res.json({token: `bearer ${token}`,message: 'login successful'})
+            res.json({token: `bearer ${token}`,message: `${user.username} login successful`})
         }
     }
     catch(e){

@@ -16,11 +16,11 @@ const categoryValidation = {
     }
 }    
 
-const comTypeSchema = {
-    notEmpty: {
-        errorMessage : 'community type must be selected'
-    }
-}
+// const premium = {
+//     isBoolean: {
+//         errorMessage : 'community type must be selected'
+//     }
+// }
 
 // const membershipSchema = { 
 //     custom: {
@@ -45,8 +45,6 @@ const comTypeSchema = {
 const communitySchema = {
     name : nameSchema,
     category : categoryValidation,
-    communityType : comTypeSchema,
-   // membershipFee : membershipSchema 
 } 
 
 module.exports = {communitySchema}
