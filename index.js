@@ -1,7 +1,8 @@
 require('dotenv').config()
 const express = require('express')
-const cors = require('cors')
-const app = express()
+const cors = require('cors') 
+const multer = require('multer')
+const app = express() 
 const configureDB = require('./config/db')
 const catCon = require('./app/controllers/categoryCon')
 const userCon = require('./app/controllers/userCon')
@@ -14,7 +15,24 @@ const {checkSchema} = require('express-validator')
 const {regiSchema , loginSchema} = require('./app/helpers/userValidations')
 const {communitySchema} = require('./app/helpers/comValidations')
 app.use(cors())
-app.use(express.json())
+app.use(express.json()) 
+const storage = multer.memoryStorage() 
+const fileFilter = (req , file, cb) => {
+    const acceptTypes = ['image/jpeg' , 'image/jpg' , 'image/png', 'video/mp4' , 'video/quicktime'] 
+    if(acceptTypes.includes(file.mimetype)) {
+        cb(null , true)
+    } else {
+        cb(new Error('Invalid file format..!,(jpg/jpeg/png/mp4/quicktime) files are accepted '))
+    }
+}
+const upload = multer({
+    storage : storage, 
+    fileFilter : fileFilter, 
+    limits : {
+        fileSize : 10 * 1024 * 1024
+    }
+})
+
 configureDB()
 const port = 4000
 
@@ -31,11 +49,11 @@ app.get('/api/comByUser/:userId' , authUser , comCon.getComByUserId)
 app.get('/api/com/cat/:categoryId', comCon.getComByCat)
 app.post('/api/community/join/:communityId' , authUser, comCon.join)
 app.delete('/api/community/delete/:id', authUser, comCon.remove)
-app.post('/api/post/create', authUser, postCon.create)
+app.post('/api/post/create', authUser, upload.array('content' , 10) , postCon.createPost)
 app.put('/api/post/update/:id' , authUser , postCon.update) 
 app.get('/api/getPosts' , postCon.getAllPosts) 
 app.get('/api/post/:id', postCon.getPost) 
-app.delete('/api/dltPost/:id' , authUser , postCon.deletePost)
+app.delete('/api/dltPost/:postId' , authUser , postCon.deletePost)
 app.post('/api/comment/:id', authUser,commentCon.create)
 app.put('/api/comment/edit/:id', authUser, commentCon.edit)
 app.get('/api/comments', commentCon.showAll)

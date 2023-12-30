@@ -3,11 +3,11 @@ const {Schema , model} = mongoose
 
 const postSchema = new Schema({
   title : String,
-  content : String,
+  content : [String],
   body : String,
   type : {
     type : String, 
-    enum : ['text' , 'audio' , 'video' , 'image']
+   
   } , 
 
   isPremium : {
