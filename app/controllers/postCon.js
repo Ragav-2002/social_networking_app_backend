@@ -13,18 +13,16 @@ AWS.config.update ({
 
 const s3 = new AWS.S3()
 
-
-
 postCon.createPost = async(req , res)=> {
     const body = _.pick(req.body, ['title', 'content', 'body' , 'type'] )
 
-    try {
+    console.log(req.files)
+    console.log(body)
         body.user = req.user.userId
         const postId = uuidv4()
         const uploadPromises = req.files.map(async (file, index) => {
         body.type = file.mimetype
         const buffer = file.mimetype.startsWith('video/') ? file.buffer : await sharp(file.buffer).resize({height : 1920 , width: 1080 , fit: 'contain' }).toBuffer()
-        console.log(buffer)
         const key = file.mimetype.startsWith('video/') ? `${postId}/video_${index + 1}.${file.originalname.split('.').pop()}` : `${postId}/image_${index + 1}.jpg`
             const params = {
               Bucket: 'snap-posts-upload',
@@ -35,13 +33,12 @@ postCon.createPost = async(req , res)=> {
             };
             await s3.upload(params).promise();
           });
-      
             await Promise.all(uploadPromises);
             body.content = req.files.map((file , index) => {
                 const mediaType = file.mimetype.startsWith('video') ? 'video' : 'image'
                 return `https://snap-posts-upload.s3.amazonaws.com/${postId}/${mediaType}_${index+1}.${file.originalname.split('.').pop()}`
             })
-      
+    try {
         const post = new Post(body)    
         await post.save()
         res.json(post)

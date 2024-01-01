@@ -26,7 +26,7 @@ userCon.register = async(req, res) => {
         }
         const user = new User(body)
         await user.save()
-        res.json(user)
+        res.json({msg: 'registered successfully'})
     }catch(e){
         res.status(500).json({errors: 'something went wrong'})
     }
