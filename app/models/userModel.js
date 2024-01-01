@@ -5,11 +5,11 @@ const userSchema = new Schema ({
     username : String,
     email : String,
     password : String,
-    createdPosts : [{type : Schema.Types.ObjectId}],
+    createdPosts : {type : Schema.Types.ObjectId} ,
     createdComs : [{type : Schema.Types.ObjectId, ref: 'Community'}],
     role : {
         type : String,
-        enum : ['admin' , 'user']
+        enum : ['admin' , 'moderator', 'user']
     },
     premiumComs: [{type : Schema.Types.ObjectId, ref: 'Community'}],
     freeComs: [{type : Schema.Types.ObjectId, ref: 'Community'}]

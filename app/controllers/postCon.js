@@ -21,18 +21,23 @@ postCon.createPost = async(req , res)=> {
     try {
         body.user = req.user.userId
         const postId = uuidv4()
-        const uploadPromises = req.files.map(async (file, index) => {
-        body.type = file.mimetype
+        const uploadPromises = req.files.map(async(file, index) => { 
+        const fileType = file.originalname.split('.').pop().toLowerCase();
+        console.log(fileType)
+        const normalizedType = fileType === 'jpg' ? 'image/jpeg' : file.mimetype;
+        body.type = normalizedType
+        console.log(normalizedType)
         const buffer = file.mimetype.startsWith('video/') ? file.buffer : await sharp(file.buffer).resize({height : 1920 , width: 1080 , fit: 'contain' }).toBuffer()
         console.log(buffer)
-        const key = file.mimetype.startsWith('video/') ? `${postId}/video_${index + 1}.${file.originalname.split('.').pop()}` : `${postId}/image_${index + 1}.jpg`
+        console.log(file.mimetype)
+        const key = file.mimetype.startsWith('video/') ? `${postId}/video_${index + 1}.${fileType}` : `${postId}/image_${index + 1}.${fileType}`
             const params = {
               Bucket: 'snap-posts-upload',
               Key: key, 
-              Body:buffer,
+              Body:buffer, 
               ContentType: file.mimetype,
               ACL: 'public-read', 
-            };
+            };   
             await s3.upload(params).promise();
           });
       
@@ -47,18 +52,18 @@ postCon.createPost = async(req , res)=> {
         res.json(post)
 
     } catch(e) {
+        console.log(e)
         res.status(500).json(e.message)
     }
 }     
         
         
         
-
 postCon.update = async (req , res) => {
-    const {id} = req.params
+    const {postId} = req.params
     const body = _.pick(req.body , ['title', 'content' , 'body' , 'type'])
     try { 
-        const posts = await Post.findByIdAndUpdate(id , body, {new : true})
+        const posts = await Post.findByIdAndUpdate(postId , body, {new : true})
         res.json(posts)
    } catch (e) {
         res.status(500).json({error : 'something went wrong'})
@@ -76,9 +81,9 @@ postCon.getAllPosts = async(req , res) => {
 } 
 
 postCon.getPost = async (req , res) => {
-    const {id} = req.params
+    const {postId} = req.params
     try { 
-        const post = await Post.findById(id)
+        const post = await Post.findById(postId)
         res.json(post) 
 
     } catch(e){
@@ -107,7 +112,7 @@ postCon.deletePost = async (req , res) => {
         res.json({message : 'Deleted'})
 
     } catch (e) {
-        res.status(500).json({message : 'something went wrong'}) 
+        res.status(500).json(e.message) 
         
     }
 } 

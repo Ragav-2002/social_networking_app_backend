@@ -15,8 +15,20 @@ const authUser = async(req, res, next) => {
     catch(e){
         res.status(401).json({errors: 'authentication failed'})
     }
+}     
+
+
+const authorize = (roles) => {
+    return function (req , res , next)  {
+        if(roles.includes(req.body.roles)) {
+            next()
+        } else {
+            res.status(403).json({error : 'Hey your are not allowed to tresspass this route'})
+        }
+    }
 }
 
 module.exports = {
-    authUser
+    authUser,
+    authorize
 }
