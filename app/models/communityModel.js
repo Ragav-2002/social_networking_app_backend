@@ -1,10 +1,8 @@
 const mongoose = require ('mongoose') 
 const {Schema , model } = mongoose 
-
 const communitySchema = new Schema ({
     name : String,
     category : Schema.Types.ObjectId,
-
     description : String,
     users : [Schema.Types.ObjectId], 
     posts : [Schema.Types.ObjectId], 
@@ -13,7 +11,5 @@ const communitySchema = new Schema ({
     isApproved : Boolean, 
     createdBy : Schema.Types.ObjectId
 }, {timestamps  :true} ) 
-
 const Community  = model ('Community' , communitySchema) 
-
 module.exports = Community 

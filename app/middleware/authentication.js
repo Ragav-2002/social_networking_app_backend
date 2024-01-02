@@ -20,7 +20,7 @@ const authUser = async(req, res, next) => {
 
 const authorize = (roles) => {
     return function (req , res , next)  {
-        if(roles.includes(req.body.roles)) {
+        if(roles.includes(req.user.userRole)) {
             next()
         } else {
             res.status(403).json({error : 'Hey your are not allowed to tresspass this route'})

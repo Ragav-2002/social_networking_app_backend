@@ -5,9 +5,9 @@ const catCon = {}
 catCon.create = async(req , res) => {
     const body = _.pick(req.body, ['name'])
     try {
-        const categories = new Category(body)
-        await categories.save()
-        res.json(categories)
+        const category = new Category(body)
+        await category.save()
+        res.json( { message : 'Category Created', category})
 
     } catch (e) {
         res.status(500).json(e.message)

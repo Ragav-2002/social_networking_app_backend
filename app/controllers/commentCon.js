@@ -9,7 +9,7 @@ commentCon.create = async(req, res) => {
     try{
         const comment = new Comment(body)
         await comment.save()
-        res.json(comment)
+        res.json( {message : 'Comment posted',comment})
     }catch(e){
         res.status(500).json({errors: 'something went wrong'})
     }
@@ -20,7 +20,7 @@ commentCon.edit = async(req, res)=>{
     const body = _.pick(req.body, ['content'])
     try{
         const comment = await Comment.findByIdAndUpdate(id, body, {new: true})
-        res.json(comment)
+        res.json({message : 'comment edited',comment})
     }
     catch(e){
         res.status(500).json({errors: 'something went wrong'})
@@ -41,7 +41,7 @@ commentCon.delete = async(req, res)=>{
     const {id} = req.params
     try{
         const comment = await Comment.findByIdAndDelete(id)
-        res.json(comment)
+        res.json({message : 'Comment Deleted Successfully' , comment})
     }
     catch(e){
         res.status(500).json({errors: 'something went wrong'})

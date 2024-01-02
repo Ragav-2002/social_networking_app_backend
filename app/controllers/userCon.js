@@ -26,7 +26,7 @@ userCon.register = async(req, res) => {
         }
         const user = new User(body)
         await user.save()
-        res.json({msg: 'registered successfully'})
+        res.json({msg: 'registered successfully' , user})
     }catch(e){
         res.status(500).json({errors: 'something went wrong'})
     }
@@ -62,6 +62,15 @@ userCon.account = async(req, res)=> {
         res.json(user)
     }catch(e){
         res.status(500).json({errors: 'something went wrong'})
+    }
+} 
+
+userCon.getAllUsers = async(req, res) => {
+    try {
+        const users = await User.find()
+        res.json(users)
+    } catch (e) {
+        res.status(500).json (e.message)
     }
 }
 
