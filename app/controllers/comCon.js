@@ -34,7 +34,7 @@ comCon.create = async(req, res) => {
 
         await User.findByIdAndUpdate(req.user.userId , {role : 'moderator'}) 
         await User.findByIdAndUpdate(userId , {$push : {createdComs : community._id}})
-        res.json({msg: 'community created successfully'})
+        res.json({msg: 'community created successfully', community })
         
     }catch(e){
         res.status(500).json(e.message)
@@ -54,7 +54,7 @@ comCon.edit = async(req, res) => {
     const body = _.pick(req.body, requiredFields)
     try{
         const community = await Community.findByIdAndUpdate(id,body,{new: true})
-        res.json(community)
+        res.json({ message : 'Community edited successfully', community})
     }catch(e){
         res.status(500).json({errors: 'something went wrong'})
     }
@@ -118,15 +118,15 @@ comCon.remove = async(req, res)=>{
     try { 
         const community = await Community.findById(communityId) 
         if(!community.users.includes(userId)) {
-            await Community.findByIdAndUpdate(communityId , {$push : {users : userId}})
-            res.json({message : 'Subscribed..!'})
+        const response = await Community.findByIdAndUpdate(communityId , {$push : {users : userId}} , {new : true})
+            res.json({message : 'Joined Community...!' , users : response.users})
         } else   {
-            await Community.findByIdAndUpdate(communityId , {$pull : {users : userId}})
-            res.json({message : 'Unsubscribed..!'})
+        const response = await Community.findByIdAndUpdate(communityId , {$pull : {users : userId}} , {new : true})
+            res.json({message : 'Left Community..!' , users : response.users})
           
         }
     } catch (e) {
-        res.status(500).json({errors : 'something went wrong budyy try again'})
+        res.status(500).json({errors : 'something went wrong buddy try again'})
     }
  }  
 

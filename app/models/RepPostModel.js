@@ -6,5 +6,5 @@ const reportPostSchema = new Schema({
     } ,
     reason : String,
 } , {timestamps : true}) 
-const PostRepo = model('Report' , reportPostSchema) 
-module.exports = PostRepo
+const PostReport = model('Report' , reportPostSchema) 
+module.exports = PostReport

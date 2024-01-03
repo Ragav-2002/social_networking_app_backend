@@ -9,7 +9,8 @@ const userCon = require('./app/controllers/userCon')
 const comCon = require('./app/controllers/comCon')
 const postCon = require('./app/controllers/postCon')
 const commentCon = require('./app/controllers/commentCon')
-const voteCon = require('./app/controllers/voteCon')
+const voteCon = require('./app/controllers/voteCon') 
+const reportCon = require('./app/controllers/reportCon')
 const {authUser , authorize} = require('./app/middleware/authentication')
 const {checkSchema} = require('express-validator') 
 const {regiSchema , loginSchema} = require('./app/helpers/userValidations')
@@ -33,7 +34,7 @@ const upload = multer({
     }
 })
 
-configureDB() 
+configureDB()  
 const port = 4000
 
 app.post('/api/user/register', checkSchema(regiSchema), userCon.register)
@@ -60,6 +61,7 @@ app.put('/api/comment/edit/:id', authUser, commentCon.edit)
 app.get('/api/comments', commentCon.showAll)
 app.delete('/api/comment/delete/:id', authUser, commentCon.delete)
 app.post('/api/like/:targetId', authUser, voteCon.vote)
+app.post('/api/report/:postId' , authUser ,  reportCon.reportPost)
 
 app.listen(port,()=>{
     console.log('server is running on port',port) 
