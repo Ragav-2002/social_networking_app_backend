@@ -13,7 +13,7 @@ voteCon.vote = async(req, res)=>{
             const addVote = new Vote(voteData)
             await addVote.save()
             
-            res.json({msg: 'vote added'})
+            res.json({msg: 'vote added', addVote})
         }
     }
     catch(e){

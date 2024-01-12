@@ -7,10 +7,10 @@ catCon.create = async(req , res) => {
     try {
         const category = new Category(body)
         await category.save()
-        res.json( { message : 'Category Created', category})
+        res.json( { message : 'Category Sent', category})
 
     } catch (e) {
-        res.status(500).json(e.message)
+        res.status(500).json({errors : 'Hey There is something wrong try again'})
     }
 } 
 

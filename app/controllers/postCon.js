@@ -56,7 +56,7 @@ postCon.createPost = async(req , res)=> {
         res.json({message : 'Post created' , post}) 
     } catch(e) {
         console.log(e)
-        res.status(500).json(e.message)
+        res.status(500).json({errors : 'something went wrong while posting, Try again'})
     }
 }     
         
@@ -115,7 +115,7 @@ postCon.deletePost = async (req , res) => {
             res.json({message : 'Deleted' , posts})
         }
     } catch (e) {
-        res.status(500).json(e.message) 
+        res.status(500).json({errors : 'something went wrong while deleting the post'}) 
     }
 }
 module.exports = postCon

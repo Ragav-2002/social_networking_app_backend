@@ -70,7 +70,7 @@ userCon.getAllUsers = async(req, res) => {
         const users = await User.find()
         res.json(users)
     } catch (e) {
-        res.status(500).json (e.message)
+        res.status(500).json ({errors : 'something went wrong while getting the users'})
     }
 }
 

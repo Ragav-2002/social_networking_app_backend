@@ -2,6 +2,7 @@ const Community = require('../models/communityModel')
 const _ = require('lodash')
 const {validationResult} = require('express-validator')
 const User = require('../models/userModel')
+const nodemailer = require('nodemailer')
 const Post = require('../models/postModel')
 
 const comCon = {}
@@ -37,7 +38,7 @@ comCon.create = async(req, res) => {
         res.json({msg: 'community created successfully', community })
         
     }catch(e){
-        res.status(500).json(e.message)
+        res.status(500).json({errors : 'Something went wrong.!, Try to create again'})
     }
 }
 
@@ -113,20 +114,48 @@ comCon.remove = async(req, res)=>{
  }
 
  comCon.join = async(req , res) => {
+    console.log(req.user)
     const {communityId} = req.params
     const {userId} = req.user
     try { 
         const community = await Community.findById(communityId) 
         if(!community.users.includes(userId)) {
         const response = await Community.findByIdAndUpdate(communityId , {$push : {users : userId}} , {new : true})
-            res.json({message : 'Joined Community...!' , users : response.users})
+        const comCreator = await User.findById(community.createdBy)
+        const comJoin = await User.findById(userId)
+        
+        
+        const transporter = nodemailer.createTransport({
+            service : 'gmail', 
+            auth : {
+                user : 'ysrinivas4901@gmail.com',
+                pass : 'wtqg hbwz lfhb wwaj'
+            }
+        }) 
+
+        const mailOptions = {
+            from : comJoin.email,
+            to : comCreator.email,
+            subject : 'user Joining',
+            text : `${comJoin.username} has joined your community`
+        }  
+        console.log(mailOptions)
+
+       transporter.sendMail(mailOptions , function(error , info){
+        if(error) {
+            console.log(error.message)
+        } else {
+            console.log('sent:' + info.response)
+        }
+       }) 
+        res.json({message : 'Joined Community...!' , users : response.users})
         } else   {
         const response = await Community.findByIdAndUpdate(communityId , {$pull : {users : userId}} , {new : true})
-            res.json({message : 'Left Community..!' , users : response.users})
+            res.json({message : 'Left Community..!' , users : response.user})
           
         }
     } catch (e) {
-        res.status(500).json({errors : 'something went wrong buddy try again'})
+        res.status(500).json({errors : 'There must be a problem try again later..!'})
     }
  }  
 
@@ -136,7 +165,7 @@ comCon.remove = async(req, res)=>{
         const communities = await Community.find({category : categoryId})
         res.json(communities)
     } catch (e) {
-        res.status(500).json(e.message)
+        res.status(500).json({errors : 'something went wrong try again..!'})
     }
  }
 
