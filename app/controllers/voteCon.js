@@ -8,12 +8,13 @@ voteCon.vote = async(req, res)=>{
     try{
         if(await Vote.findOne(voteData)){
             await Vote.findOneAndDelete(voteData)
-            res.json({msg: 'vote removed'})
+            const votes = await Vote.find()
+            res.json(votes)
         }else{
             const addVote = new Vote(voteData)
             await addVote.save()
-            
-            res.json({msg: 'vote added', addVote})
+            const votes = await Vote.find()
+            res.json(votes)
         }
     }
     catch(e){
@@ -21,5 +22,14 @@ voteCon.vote = async(req, res)=>{
     }
 }
 
+voteCon.getLikes = async(req, res)=>{
+    try{
+        const votes = await Vote.find() 
+        res.json(votes)
+    }
+    catch(e){
+        res.status(500).json({errors: 'something went wrong'})
+    }
+}
 
 module.exports = voteCon
