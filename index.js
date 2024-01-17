@@ -30,7 +30,7 @@ const upload = multer({
     storage : storage, 
     fileFilter : fileFilter, 
     limits : {
-        fileSize : 30 * 1024 * 1024
+        fileSize : 500 * 1024 * 1024
     }
 })
 
@@ -61,6 +61,7 @@ app.put('/api/comment/edit/:id', authUser, commentCon.edit)
 app.get('/api/comments', commentCon.showAll)
 app.delete('/api/comment/delete/:id', authUser, commentCon.delete)
 app.post('/api/like/:targetId', authUser, voteCon.vote)
+app.get('/api/getLikes', voteCon.getLikes)
 app.post('/api/report/:postId' , authUser ,  reportCon.reportPost)
 
 app.listen(port,()=>{
