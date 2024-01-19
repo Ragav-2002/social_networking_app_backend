@@ -31,9 +31,7 @@ comCon.create = async(req, res) => {
     try{
         const community = new Community(body)
         await community.save()
-      
-
-        await User.findByIdAndUpdate(req.user.userId , {role : 'moderator'}) 
+        await User.findByIdAndUpdate(userId , {role : 'moderator'}) 
         await User.findByIdAndUpdate(userId , {$push : {createdComs : community._id}})
         res.json({msg: 'community created successfully', community })
         
@@ -74,6 +72,7 @@ comCon.show = async(req, res) => {
 
 comCon.remove = async(req, res)=>{
     const {id} = req.params
+    console.log(req.user.userRole)
     try{
        
         if(req.user.userRole == 'admin') {
@@ -82,7 +81,9 @@ comCon.remove = async(req, res)=>{
         } else if (req.user.userRole == 'moderator') {
            if (await Community.findOne({createdBy : req.user.userId , _id : id})){
               await Community.findByIdAndDelete(id)
-              res.json({message : 'Deleted Successfully'})
+              await Post.deleteMany( { "community" : id } )
+              const result = await Post.find()
+              res.json(result)
            } else {
             return  res.status(403).json({errors: 'you are not supposed to delete this community'})
            }
