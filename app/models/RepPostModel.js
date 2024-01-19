@@ -5,6 +5,7 @@ const reportPostSchema = new Schema({
         type : Schema.Types.ObjectId,
     } ,
     reason : String,
+   
 } , {timestamps : true}) 
 const PostReport = model('Report' , reportPostSchema) 
 module.exports = PostReport

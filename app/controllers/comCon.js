@@ -128,13 +128,13 @@ comCon.remove = async(req, res)=>{
         const transporter = nodemailer.createTransport({
             service : 'gmail', 
             auth : {
-                user : 'ysrinivas4901@gmail.com',
-                pass : 'wtqg hbwz lfhb wwaj'
+                user : 'snapp8006@gmail.com',
+                pass : 'upby yvih lboq mcxw'
             }
         }) 
 
         const mailOptions = {
-            from : comJoin.email,
+            from : 'snapp8006@gmail.com',
             to : comCreator.email,
             subject : 'user Joining',
             text : `${comJoin.username} has joined your community`
