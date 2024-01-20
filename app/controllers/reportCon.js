@@ -1,51 +1,62 @@
 const _ = require('lodash');
-const nodemailer = require('nodemailer');
-const postReport = require('../models/RepPostModel');
+const ReportPost = require('../models/RepPostModel');
+const Post = require('../models/postModel') 
+const Community = require('../models/communityModel')
+const ReportedCommunity = require('../models/RepComModel')
 
 const reportCon = {};
 
 reportCon.reportPost = async (req, res) => {
     const { postId } = req.params;
     const body = _.pick(req.body, ['reason']);
-
     try {
-       
-        const report = new postReport({
-            postId,
+       const post = await Post.findById(postId)
+        const report = new ReportPost({
+            post,
             reason: body.reason,
-        });
-
-        
+        }); 
         await report.save();
-
-        
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: 'ysrinivas4901@gmail.com',
-                pass: 'wtqg hbwz lfhb wwaj',
-            },
-        });
-        const sendReport = async (report) => {
-            const mailOptions = {
-                from: 'ysrinivas4901@gmail.com',
-                to: 'ragavbts@gmail.com',
-                subject: 'Reporting on a post',
-                text: `A new report has been submitted for the post ${report.postId}, Reason: ${report.reason}`,
-            };
-
-         
-            await transporter.sendMail(mailOptions);
-        };
-
-        
-        await sendReport(report);
-
-        
-        res.status(201).json({ message: 'Report submitted successfully' });
+        res.status(201).json({ message: 'Report Sent' });
     } catch (e) {
         console.error('Error submitting report:', e.message);
-        res.status(500).json({ error: 'Internal Server Error'});
+        res.status(500).json({ errors: 'Internal Server Error'});
     }
-};
+};   
+
+reportCon.getReportedPosts = async(req , res) => {
+    try {
+        const reportedPosts = await ReportPost.find()
+        res.json(reportedPosts)
+    } catch (e){
+        res.status(500).json({errors : 'something went wrong'})
+    }
+}  
+
+reportCon.reportComm = async (req , res) => {
+    const {communityId} = req.params 
+    const body = _.pick(req.body , ['reason']) 
+    try {
+        const community = await Community.findById(communityId) 
+        const report = new ReportedCommunity ({
+            community,
+            reason : body.reason 
+        })
+        await report.save()
+        res.status(201).json({message : 'Report Sent'})
+    } catch (e) {
+        res.status(500).json({errors : 'something went wrong'})
+    }
+} 
+
+reportCon.getAllReportedCommunities = async (req , res) => {
+    try {
+        const reportedCommunities = await ReportedCommunity.find() 
+        res.json(reportedCommunities)
+    } catch (e) {
+        res.status(500).json({errors : 'something went wrong'})
+    }
+}
+
+
+
 module.exports = reportCon;

@@ -63,6 +63,9 @@ app.delete('/api/comment/delete/:id', authUser, commentCon.delete)
 app.post('/api/like/:targetId', authUser, voteCon.vote)
 app.get('/api/getLikes', voteCon.getLikes)
 app.post('/api/report/:postId' , authUser ,  reportCon.reportPost)
+app.get('/api/getRepPosts' , authUser , authorize(['admin']) , reportCon.getReportedPosts)
+app.post('/api/reportComm/:communityId' , authUser , reportCon.reportComm)
+app.get('/api/getReportComm' , authUser , authorize(['admin']) , reportCon.getAllReportedCommunities)
 
 app.listen(port,()=>{
     console.log('server is running on port',port) 

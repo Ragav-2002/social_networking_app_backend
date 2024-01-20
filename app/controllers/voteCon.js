@@ -70,7 +70,7 @@ voteCon.vote = async(req, res)=>{
         }
     }
     catch(e){
-        res.status(500).json(e.message)
+        res.status(500).json({errors : 'something went wrong'})
     }
 }
 

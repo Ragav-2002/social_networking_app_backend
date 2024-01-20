@@ -21,18 +21,13 @@ commentCon.create = async (req, res) => {
     try {
         const comment = new Comment(body);
         await comment.save();
-
-       
         const [commentDetails, userDetails, postDetails] = await Promise.all([
-            Comment.findById(comment._id).populate('user', 'username'),
-            User.findById(req.user.userId),
-            Post.findById(req.params.id, 'title').populate('user', 'email'), 
+        Comment.findById(comment._id).populate('user', 'username'),
+        User.findById(req.user.userId),
+        Post.findById(req.params.id, 'title').populate('user', 'email'), 
         ]);
-
-       
         const postCreatorEmail = postDetails.user ? postDetails.user.email : '';
         const commenterUsername = userDetails ? userDetails.username : '';
-
         const mailOptions = {
             from: 'snapp8006@gmail.com',
             to: postCreatorEmail,

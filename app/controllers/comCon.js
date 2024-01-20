@@ -22,16 +22,14 @@ comCon.create = async(req, res) => {
     ]
     const body = _.pick(req.body, requiredFields)
     body.createdBy = userId
-    if(body.premium){
-        body.isApproved = true
-    }else{
-        body.isApproved = false
-    }
-    
     try{
         const community = new Community(body)
         await community.save()
-        await User.findByIdAndUpdate(userId , {role : 'moderator'}) 
+        const user = await User.findById(userId)
+        if(user.role == 'user') {
+            await User.findByIdAndUpdate(userId , {role : 'moderator'})
+        }
+        
         await User.findByIdAndUpdate(userId , {$push : {createdComs : community._id}})
         res.json({msg: 'community created successfully', community })
         
@@ -96,7 +94,7 @@ comCon.remove = async(req, res)=>{
 
  comCon.getAllCom = async(req , res) => {
     try {
-        const community = await Community.find() 
+        const community = await Community.find({isApproved : true}) 
          res.json(community)
         
     } catch (e) {
@@ -110,7 +108,7 @@ comCon.remove = async(req, res)=>{
          const com = await Community.find({createdBy  : userId})
          res.json(com)
     } catch (e) {
-        res.status(500).json (e.message)
+        res.status(500).json ({errors : 'something went wrong'})
     }
  }
 

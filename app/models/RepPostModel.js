@@ -1,11 +1,9 @@
 const mongoose = require('mongoose') 
 const {Schema , model} = mongoose 
 const reportPostSchema = new Schema({
-    postId : {
-        type : Schema.Types.ObjectId,
-    } ,
+    post : Object,
     reason : String,
    
 } , {timestamps : true}) 
-const PostReport = model('Report' , reportPostSchema) 
-module.exports = PostReport
+const ReportPost = model('ReportPost' , reportPostSchema) 
+module.exports = ReportPost

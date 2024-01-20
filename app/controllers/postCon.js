@@ -60,16 +60,14 @@ postCon.createPost = async(req , res)=> {
     }
 }     
         
-        
-        
-postCon.update = async (req , res) => {
+    postCon.update = async (req , res) => {
     const {postId} = req.params
     const body = _.pick(req.body , ['title', 'content' , 'body' , 'type'])
     try { 
         const posts = await Post.findByIdAndUpdate(postId , body, {new : true})
         res.json({message : 'Post Updated' , posts})
    } catch (e) {
-        res.status(500).json({error : 'something went wrong'})
+        res.status(500).json({errors : 'something went wrong'})
     }
 }
 
@@ -118,4 +116,5 @@ postCon.deletePost = async (req , res) => {
         res.status(500).json({errors : 'something went wrong while deleting the post'}) 
     }
 }
+
 module.exports = postCon

@@ -7,8 +7,8 @@ const postSchema = new Schema({
   type : {
     type : String, 
   } , 
-  isPremium : {
-    type : Boolean
+  isApproved : {
+    type : Boolean, default : true
   } ,
   user : {
     type : Schema.Types.ObjectId,
@@ -17,6 +17,7 @@ const postSchema = new Schema({
   community : {
     type : Schema.Types.ObjectId,  
   }, 
+
   votes : [{
     type : Schema.Types.ObjectId
   }]
