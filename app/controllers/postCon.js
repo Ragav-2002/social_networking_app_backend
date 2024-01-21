@@ -4,6 +4,7 @@ const _ = require('lodash')
 const AWS = require('aws-sdk')
 const { v4 : uuidv4} = require('uuid')
 const sharp = require('sharp')
+const {validationResult} = require('express-validator')
 const postCon = {} 
 
 AWS.config.update ({
@@ -14,7 +15,11 @@ AWS.config.update ({
 
 const s3 = new AWS.S3()
 
-postCon.createPost = async(req , res)=> {
+postCon.createPost = async(req , res)=> { 
+    const errors = validationResult(req) 
+    if(!errors.isEmpty()) {
+       return res.status(400).json({errors : errors.array()})
+    }
     const body = _.pick(req.body, ['title', 'content', 'body' , 'type','community'] )
     console.log(req.files)
     console.log(body)
