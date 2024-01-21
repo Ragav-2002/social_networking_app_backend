@@ -11,9 +11,9 @@ reportCon.reportPost = async (req, res) => {
     const body = _.pick(req.body, ['reason']);
     try {
        const post = await Post.findById(postId)
+       post.reason = body.reason
         const report = new ReportPost({
-            post,
-            reason: body.reason,
+            post
         }); 
         await report.save();
         res.status(201).json({ message: 'Report Sent' });
