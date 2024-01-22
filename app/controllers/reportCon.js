@@ -1,8 +1,8 @@
 const _ = require('lodash');
 const ReportPost = require('../models/RepPostModel');
-const Post = require('../models/postModel') 
-const Community = require('../models/communityModel')
-const ReportedCommunity = require('../models/RepComModel')
+const Post = require('../models/postModel');
+const Comments = require('../models/commentModel');
+const Vote = require('../models/voteModel');
 
 const reportCon = {};
 
@@ -10,11 +10,12 @@ reportCon.reportPost = async (req, res) => {
     const { postId } = req.params;
     const body = _.pick(req.body, ['reason']);
     try {
-       const post = await Post.findById(postId)
-       post.reason = body.reason
-        const report = new ReportPost({
-            post
-        }); 
+        if(await ReportPost.findOne({userId: req.user.userId, postId: postId})){
+            return res.json({ message: 'already reported'})
+        }
+        body.postId = postId
+        body.userId = req.user.userId
+        const report = new ReportPost(body); 
         await report.save();
         res.status(201).json({ message: 'Report Sent' });
     } catch (e) {
@@ -25,38 +26,35 @@ reportCon.reportPost = async (req, res) => {
 
 reportCon.getReportedPosts = async(req , res) => {
     try {
-        const reportedPosts = await ReportPost.find()
-        res.json(reportedPosts)
+        const reportedPosts = await ReportPost.find().populate('postId')
+        const groupedReports = reportedPosts.reduce((acc, report) => {
+            const postId = report.postId._id.toString();
+            if (!acc[postId]) {
+              acc[postId] = {
+                ...report.postId.toObject(),
+                  reports: 1,
+              };
+            } else {
+              acc[postId].reports += 1;
+            }
+            return acc;
+          }, {});
+          const formattedResponse = Object.values(groupedReports);
+          res.json(formattedResponse)
     } catch (e){
-        res.status(500).json({errors : 'something went wrong'})
-    }
-}  
-
-reportCon.reportComm = async (req , res) => {
-    const {communityId} = req.params 
-    const body = _.pick(req.body , ['reason']) 
-    try {
-        const community = await Community.findById(communityId) 
-        const report = new ReportedCommunity ({
-            community,
-            reason : body.reason 
-        })
-        await report.save()
-        res.status(201).json({message : 'Report Sent'})
-    } catch (e) {
-        res.status(500).json({errors : 'something went wrong'})
-    }
-} 
-
-reportCon.getAllReportedCommunities = async (req , res) => {
-    try {
-        const reportedCommunities = await ReportedCommunity.find() 
-        res.json(reportedCommunities)
-    } catch (e) {
         res.status(500).json({errors : 'something went wrong'})
     }
 }
 
+reportCon.removeReport = async(req, res) => {
+    const id = req.params.id
+    try{
+        await ReportPost.deleteMany({postId: id})
+        res.json({message: 'removed from reportedPosts'})
+    }catch(e){
+        res.status(500).json({errors : 'something went wrong'})
+    }
+}
 
 
 module.exports = reportCon;

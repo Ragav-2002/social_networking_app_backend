@@ -5,6 +5,9 @@ const AWS = require('aws-sdk')
 const { v4 : uuidv4} = require('uuid')
 const sharp = require('sharp')
 const {validationResult} = require('express-validator')
+const ReportPost = require('../models/RepPostModel')
+const Comments = require('../models/commentModel')
+const Vote = require('../models/voteModel')
 const postCon = {} 
 
 AWS.config.update ({
@@ -96,9 +99,9 @@ postCon.getPost = async (req , res) => {
 } 
 
 postCon.deletePost = async (req , res) => {
-    const {postId} = req.params
+    const {id} = req.params
     try { 
-        const posts = await Post.findById(postId)
+        const posts = await Post.findById(id)
         const deleteProm = posts.content.map(async(iUrl) => {
         const key = iUrl.split('snap-posts-upload.s3.amazonaws.com/')[1]
         const params = {
@@ -108,16 +111,24 @@ postCon.deletePost = async (req , res) => {
             await s3.deleteObject(params).promise()
         }) 
         if(req.user.userRole == 'admin'){
-            await Post.findByIdAndDelete(postId)
-            res.json({message : 'Deleted' , posts})
+            await Post.findByIdAndDelete(id)
+            await Comments.deleteMany({post: id})
+            await Vote.deleteMany({targetId: id})
+            await ReportPost.deleteMany({postId: id})
+            await Promise.all(deleteProm)
+            res.json({message: 'post deleted successfully'})
         }  
         else if(req.user.userRole == 'moderator') {
-            await Post.findOne({createdBy : req.user.userId , _id : postId}) 
-            await Post.findByIdAndDelete(postId)
-            await Promise.all(deleteProm) 
-            res.json({message : 'Deleted' , posts})
+            if(await Post.findOne({createdBy : req.user.userId , _id : id})){
+                await Post.findByIdAndDelete(id)
+                await Comments.deleteMany({post: id})
+                await Vote.deleteMany({targetId: id})
+                await ReportPost.deleteMany({postId: id})
+                await Promise.all(deleteProm)
+                res.json({message: 'post deleted successfully'})
+            }
         }
-    } catch (e) {
+    } catch(e){
         res.status(500).json({errors : 'something went wrong while deleting the post'}) 
     }
 }

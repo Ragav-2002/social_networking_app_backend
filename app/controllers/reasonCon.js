@@ -5,7 +5,7 @@ const reasonCon = {}
 reasonCon.create = async(req , res) => {
     const body = _.pick (req.body , ['reason'])
     try {
-        const reason = new Reason (body) 
+        const reason = new Reason(body) 
         await reason.save()
         res.json(reason)
     } catch (e) {
@@ -16,7 +16,7 @@ reasonCon.create = async(req , res) => {
 reasonCon.getReasons = async (req , res) => {
     try {
         const reasons = await Reason.find()
-        res.josn (reasons)
+        res.json(reasons)
     } catch (e) {
         res.status(500).json({errors : 'something went wrong'})
     }

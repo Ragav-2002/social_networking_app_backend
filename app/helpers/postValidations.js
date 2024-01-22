@@ -13,15 +13,6 @@ const titleSchema = {
 const contentSchema = {
     notEmpty : {
         errorMessage : 'File must be selected to post something'
-    } , 
-
-    custom : {
-        options : ({req}) => {
-            if(!req.content || req.content.length === 0) {
-                throw new Error('Please select a file')
-            }
-            return true
-        }
     }
 }  
 

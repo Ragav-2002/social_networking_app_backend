@@ -54,9 +54,10 @@ commentCon.create = async (req, res) => {
 commentCon.edit = async(req, res)=>{
     const {id} = req.params
     const body = _.pick(req.body, ['content'])
-    try{
-        const comment = await Comment.findByIdAndUpdate(id, body, {new: true})
+    const comment = await Comment.findByIdAndUpdate(id, body, {new: true})
         res.json({message : 'comment edited',comment})
+    try{
+        
     }
     catch(e){
         res.status(500).json({errors: 'something went wrong'})
