@@ -2,6 +2,7 @@ const Community = require('../models/communityModel')
 const _ = require('lodash')
 const {validationResult} = require('express-validator')
 const User = require('../models/userModel')
+const Payment = require('../models/paymentModel')
 const nodemailer = require('nodemailer')
 const Post = require('../models/postModel')
 
@@ -30,7 +31,8 @@ comCon.create = async(req, res) => {
             await User.findByIdAndUpdate(userId , {role : 'moderator'})
         }
         
-        await User.findByIdAndUpdate(userId , {$push : {createdComs : community._id}})
+        // await User.findByIdAndUpdate(userId , {$push : {createdComs : community._id}}) 
+        
         res.json({msg: 'community created successfully', community })
         
     }catch(e){
@@ -112,53 +114,45 @@ comCon.remove = async(req, res)=>{
     }
  }
 
- comCon.join = async(req , res) => {
-    console.log(req.user)
-    const {communityId} = req.params
-    const {userId} = req.user
-    try { 
-        const community = await Community.findById(communityId) 
-        if(!community.users.includes(userId)) {
-        const response = await Community.findByIdAndUpdate(communityId , {$push : {users : userId}} , {new : true})
-        const comCreator = await User.findById(community.createdBy)
-        const comJoin = await User.findById(userId)
-        
-        
-        const transporter = nodemailer.createTransport({
-            service : 'gmail', 
-            auth : {
-                user : 'snapp8006@gmail.com',
-                pass : 'upby yvih lboq mcxw'
+ comCon.join = async (req, res) => {
+    const { communityId } = req.params;
+    const { userId } = req.user;
+
+    try {
+        const community = await Community.findById(communityId);
+
+        if (community.premium) {
+            // Check if the user has made a payment
+            const hasSubscription = await Payment.findOne({
+                userId: userId,
+                communityId: communityId,
+            });
+
+            if (!hasSubscription) {
+                return res.status(403).json({ errors: 'You are not subscribed' });
             }
-        }) 
-
-        const mailOptions = {
-            from : 'snapp8006@gmail.com',
-            to : comCreator.email,
-            subject : 'user Joining',
-            text : `${comJoin.username} has joined your community`
-        }  
-        console.log(mailOptions)
-
-       transporter.sendMail(mailOptions , function(error , info){
-        if(error) {
-            console.log(error.message)
-        } else {
-            console.log('sent:' + info.response)
         }
-       }) 
-        res.json({message : 'Joined Community...!' , users : response.users})
-        } else   {
-        const response = await Community.findByIdAndUpdate(communityId , {$pull : {users : userId}} , {new : true})
-            res.json({message : 'Left Community..!' , users : response.user})
-          
-        }
+
+        // Update user membership directly without toggle
+        const updatedCommunity = await Community.findByIdAndUpdate(
+            community._id,
+            community.users.includes(userId)
+                ? { $pull: { users: userId } }
+                : { $push: { users: userId } },
+            { new: true }
+        );
+
+        res.json({
+            message: 'Joined/Left Community Successfully!',
+            users: updatedCommunity.users,
+        });
     } catch (e) {
-        res.status(500).json({errors : 'There must be a problem try again later..!'})
+        res.status(500).json({ errors: 'There must be a problem, try again later..!' });
     }
- }  
+};
 
- comCon.getComByCat = async(req, res) => {
+        
+    comCon.getComByCat = async(req, res) => {
     const {categoryId} = req.params 
     try {
         const communities = await Community.find({category : categoryId})
@@ -166,7 +160,7 @@ comCon.remove = async(req, res)=>{
     } catch (e) {
         res.status(500).json({errors : 'something went wrong try again..!'})
     }
- }
+}
 
 
 

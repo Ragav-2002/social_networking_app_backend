@@ -1,9 +1,10 @@
 const mongoose = require('mongoose') 
 const {Schema , model} = mongoose 
 const paymentSchema = new Schema( {
-    userId : ObjectId,
+    userId : Schema.Types.ObjectId,
     amount : Number,
-    communityId : ObjectId
+    method : String,
+    communityId : Schema.Types.ObjectId
 }, {timestamps : true} ) 
 const Payment = model ('Payment' , paymentSchema) 
 module.exports = Payment 

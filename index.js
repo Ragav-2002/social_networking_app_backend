@@ -9,6 +9,7 @@ const userCon = require('./app/controllers/userCon')
 const comCon = require('./app/controllers/comCon')
 const postCon = require('./app/controllers/postCon')
 const commentCon = require('./app/controllers/commentCon')
+const paymentCon = require('./app/controllers/paymentCon')
 const voteCon = require('./app/controllers/voteCon') 
 const reportCon = require('./app/controllers/reportCon')
 const {authUser , authorize} = require('./app/middleware/authentication')
@@ -34,7 +35,7 @@ const upload = multer({
     limits : {
         fileSize : 500 * 1024 * 1024
     }
-})
+}) 
 
 configureDB()  
 const port = 4000
@@ -69,6 +70,7 @@ app.get('/api/getRepPosts' , authUser , authorize(['admin']) , reportCon.getRepo
 app.post('/api/reason', authUser , reasonCon.create)
 app.get('/api/getReason', reasonCon.getReasons)
 app.delete('/api/removeReport/:id', authUser, authorize(['admin']), reportCon.removeReport)
+app.post('/api/payment/pay' , authUser , paymentCon.pay)
 
 app.listen(port,()=>{
     console.log('server is running on port',port) 
