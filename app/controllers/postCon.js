@@ -34,7 +34,7 @@ postCon.createPost = async(req , res)=> {
         const normalizedType = fileType === 'jpg' ? 'image/jpeg' : file.mimetype;
         body.type = normalizedType
         console.log(normalizedType)
-        const buffer = file.mimetype.startsWith('video/') ? file.buffer : await sharp(file.buffer).resize({height : 1920 , width: 1080 , fit: 'contain' }).toBuffer()
+        const buffer = file.buffer
         console.log(buffer)
         console.log(file.mimetype)
         const key = file.mimetype.startsWith('video/') ? `${postId}/video_${index + 1}.${fileType}` : `${postId}/image_${index + 1}.${fileType}`
