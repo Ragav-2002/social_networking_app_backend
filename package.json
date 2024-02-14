@@ -9,7 +9,7 @@
   },
   "optionalDependencies": {
     "fsevents": "*"
- },
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
