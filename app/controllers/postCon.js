@@ -2,7 +2,7 @@ const Post = require('../models/postModel')
 const User = require('../models/userModel')
 const _ = require('lodash')
 const AWS = require('aws-sdk')
-const { v4 : uuidv4} = require('uuid')
+const { v4 : uuidv4} = require('uuid') 
 const {validationResult} = require('express-validator')
 const ReportPost = require('../models/RepPostModel')
 const Comments = require('../models/commentModel')
@@ -22,7 +22,7 @@ postCon.createPost = async(req , res)=> {
     if(!errors.isEmpty()) {
        return res.status(400).json({errors : errors.array()})
     }
-    const body = _.pick(req.body, ['title', 'content', 'body' , 'type','community'] )
+    const body = _.pick(req.body, ['title', 'content', 'body' , 'type','community', 'premium'] )
     console.log(req.files)
     console.log(body)
     body.user = req.user.userId

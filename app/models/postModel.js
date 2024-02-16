@@ -17,7 +17,7 @@ const postSchema = new Schema({
   community : {
     type : Schema.Types.ObjectId,  
   }, 
-
+  premium: Boolean,
   votes : [{
     type : Schema.Types.ObjectId
   }]
