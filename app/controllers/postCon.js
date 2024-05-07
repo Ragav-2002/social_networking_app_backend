@@ -118,7 +118,7 @@ postCon.deletePost = async (req , res) => {
             res.json({message: 'post deleted successfully'})
         }  
         else if(req.user.userRole == 'moderator') {
-            if(await Post.findOne({createdBy : req.user.userId , _id : id})){
+            if(await Post.findOne({user : req.user.userId , _id : id})){
                 await Post.findByIdAndDelete(id)
                 await Comments.deleteMany({post: id})
                 await Vote.deleteMany({targetId: id})
